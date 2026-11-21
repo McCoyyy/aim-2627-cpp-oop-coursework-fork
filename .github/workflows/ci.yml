@@ -42,18 +42,15 @@ jobs:
       - name: Run public tests when implemented
         run: |
           if grep -R "TODO: implement" -n include src; then
-            echo "TODO template detected; public tests are deferred to the private grader." >> "$GITHUB_STEP_SUMMARY"
+            echo "TODO template detected; public tests are deferred to the private grader."
           else
             ctest --test-dir build -R public_tests --output-on-failure
           fi
 
-      - name: Submission summary
+      - name: Generate question summary
         if: always()
-        run: |
-          {
-            echo "## C++ OOP Coursework 2"
-            echo ""
-            echo "- Public workflow completed for the pushed commit."
-            echo "- Final hidden grading is executed in the private grader repository."
-            echo "- [AIM 2627 CPP Coursework 2 回执](https://docs.qq.com/form/page/DWmRmVXVVeVVkUExs)"
-          } >> "$GITHUB_STEP_SUMMARY"
+        run: python3 tools/summarize.py
+
+      - name: Publish question summary
+        if: always()
+        run: cat summary.md >> "$GITHUB_STEP_SUMMARY"
