@@ -38,3 +38,22 @@ jobs:
           cmake --build build --parallel 2
           ctest --test-dir build -R debug_task --output-on-failure
           python3 tools/validate_structure.py
+
+      - name: Run public tests when implemented
+        run: |
+          if grep -R "TODO: implement" -n include src; then
+            echo "TODO template detected; public tests are deferred to the private grader." >> "$GITHUB_STEP_SUMMARY"
+          else
+            ctest --test-dir build -R public_tests --output-on-failure
+          fi
+
+      - name: Submission summary
+        if: always()
+        run: |
+          {
+            echo "## C++ OOP Coursework 2"
+            echo ""
+            echo "- Public workflow completed for the pushed commit."
+            echo "- Final hidden grading is executed in the private grader repository."
+            echo "- [AIM 2627 CPP Coursework 2 回执](https://docs.qq.com/form/page/DWmRmVXVVeVVkUExs)"
+          } >> "$GITHUB_STEP_SUMMARY"
