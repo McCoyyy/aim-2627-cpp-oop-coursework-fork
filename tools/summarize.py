@@ -89,7 +89,7 @@ def main():
         "",
         "1. 变更白名单检查：只允许 `include/**`、`src/**`、`docs/**`、`README.md`、`.agent-sessions/bundles/**`。",
         "2. CMake 构建：验证 C++17 编译、链接与目标生成。",
-        "3. 结构检查：验证 Q1/Q3 必需头文件、源文件与 ROS 包文件存在。",
+        "3. 结构检查：验证 Q1/Q3 必需文件、include guard、头文件 using namespace、领域反向依赖和 ROS 核心源码复用。",
         "4. Debug 检查：运行 `debug_task`，并比对 Q4 目标输出。",
         "5. 公开测试：TODO 全部完成后运行 `public_tests`；初始 TODO 阶段跳过，隐藏测试仍由私有 grader 执行。",
         "6. ROS 检查：公开 CI 只做包结构与核心库链接检查；六事件运行时序列不在公开 runner 安装 ROS 2。",

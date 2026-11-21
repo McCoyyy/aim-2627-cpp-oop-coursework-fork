@@ -2,6 +2,7 @@
 #include <std_msgs/msg/string.hpp>
 
 #include <chrono>
+#include <thread>
 #include <string>
 
 namespace warehouse_dispatch {
@@ -11,6 +12,7 @@ public:
     SimulatorNode() : Node("warehouse_simulator") {
         event_publisher_ = create_publisher<std_msgs::msg::String>(
             "warehouse_events", 10);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         timer_ = create_wall_timer(
             std::chrono::milliseconds(300),
             [this]() { publish_next_event(); });

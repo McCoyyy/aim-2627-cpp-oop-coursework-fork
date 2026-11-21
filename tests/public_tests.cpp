@@ -41,6 +41,25 @@ void test_inventory_and_scheduler() {
             "completion restores idle");
 }
 
+void test_stock_policy_and_failed_submission() {
+    warehouse::Inventory inventory;
+    inventory.add_station("S1", 1);
+    inventory.add_station("S2", 4);
+    inventory.add_station("S3", 4);
+    audit::Trace trace;
+    dispatch::Scheduler scheduler(
+        inventory, dispatch::make_policy("stock"), trace);
+
+    const auto first = scheduler.submit({"O1", "SKU-A", 1});
+    require(first.accepted && first.station_id == "S2",
+            "stock policy tie uses station id");
+    const auto rejected = scheduler.submit({"O2", "SKU-A", 10});
+    require(!rejected.accepted, "insufficient stock rejected");
+    require(inventory.station("S1")->stock == 1,
+            "failed submission has no side effects");
+    require(trace.events().size() == 1, "failed submission is not traced");
+}
+
 void test_trace_and_validation() {
     audit::Trace trace;
     trace.append("O1 accepted");
@@ -59,6 +78,7 @@ void test_trace_and_validation() {
 int main() {
     try {
         test_inventory_and_scheduler();
+        test_stock_policy_and_failed_submission();
         test_trace_and_validation();
         std::cout << "PUBLIC 2/2\n";
         return 0;

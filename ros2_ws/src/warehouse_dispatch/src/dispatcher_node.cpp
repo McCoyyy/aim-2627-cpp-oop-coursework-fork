@@ -8,6 +8,7 @@
 
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace warehouse_dispatch {
@@ -48,8 +49,13 @@ private:
         }
         if (fields.size() == 2 && fields[0] == "COMPLETE") {
             std::string failure;
+            const auto station = accepted_stations_.find(fields[1]);
+            if (station == accepted_stations_.end()) {
+                publish("BAD_COMPLETE", fields[1] + " unknown order");
+                return;
+            }
             const bool accepted = scheduler_.complete(
-                fields[1], fields[1], failure);
+                station->second, fields[1], failure);
             publish(accepted ? "COMPLETE" : "BAD_COMPLETE",
                     fields[1] + (accepted ? "" : " " + failure));
             return;
@@ -74,8 +80,14 @@ private:
             const warehouse::Order order{fields[1], fields[2],
                                          quantity};
             const auto decision = scheduler_.submit(order);
+            if (decision.accepted) {
+                accepted_stations_.emplace(decision.order_id,
+                                           decision.station_id);
+            }
             publish(decision.accepted ? "ACCEPT" : "REJECT",
-                    decision.order_id + " " + decision.station_id);
+                    decision.accepted
+                        ? decision.order_id + " " + decision.station_id
+                        : decision.order_id);
         } else if (fields.size() == 4 && fields[0] == "COMPLETE") {
             std::string failure;
             const bool accepted = scheduler_.complete(
@@ -97,6 +109,7 @@ private:
     warehouse::Inventory inventory_;
     audit::Trace trace_;
     dispatch::Scheduler scheduler_;
+    std::unordered_map<std::string, std::string> accepted_stations_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr result_publisher_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };

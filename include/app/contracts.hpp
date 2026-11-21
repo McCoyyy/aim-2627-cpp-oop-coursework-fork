@@ -1,7 +1,7 @@
-#include "app/cli.hpp"
-
 #ifndef AIM_OOP_APP_CONTRACTS_HPP
 #define AIM_OOP_APP_CONTRACTS_HPP
+
+#include "app/cli.hpp"
 
 namespace app {
 
