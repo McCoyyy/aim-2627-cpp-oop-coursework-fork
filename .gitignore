@@ -1,0 +1,8 @@
+build/
+log/
+install/
+.agent-sessions/source/
+.venv-agent-session-commit/
+.DS_Store
+.idea/
+.vscode/

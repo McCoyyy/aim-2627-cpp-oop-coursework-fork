@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changed files
+        if: github.repository != 'unnc-aim/aim-2627-cpp-oop-coursework'
+        run: |
+          set -e
+          BASE=$(git rev-list --max-parents=0 HEAD | tail -1)
+          CHANGED=$(git diff --name-only "$BASE" HEAD)
+          echo "$CHANGED"
+          BAD=$(echo "$CHANGED" | grep -v -E '^(\.agent-sessions/bundles/.*|include/.*|src/.*|docs/.*|README\.md)$' | grep -v '^$' || true)
+          if [ -n "$BAD" ]; then
+            echo "::error::只允许修改 include/**、src/**、docs/**、README.md 和 Agent 归档，以下文件不在白名单："
+            echo "$BAD"
+            exit 1
+          fi
+
+      - name: Configure and test
+        run: |
+          cmake -S . -B build
+          cmake --build build --parallel 2
+          ctest --test-dir build --output-on-failure
