@@ -7,3 +7,4 @@ install/
 .idea/
 .vscode/
 summary.md
+__pycache__/
