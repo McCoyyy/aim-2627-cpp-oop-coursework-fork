@@ -36,4 +36,5 @@ jobs:
         run: |
           cmake -S . -B build
           cmake --build build --parallel 2
-          ctest --test-dir build --output-on-failure
+          ctest --test-dir build -R debug_task --output-on-failure
+          python3 tools/validate_structure.py
