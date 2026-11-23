@@ -1,5 +1,7 @@
 #include "app/cli.hpp"
 
+#include "app/contracts.hpp"
+
 #include <algorithm>
 #include <cctype>
 #include <iostream>
@@ -52,7 +54,9 @@ bool valid_order_id(const std::string& order_id) {
 }
 
 int run() {
-    std::cout << "Use the ROS 2 demo package for the end-to-end runtime.\n";
+    std::cout << app::version << "\n";
+    std::cout << "Core library is used by core_demo, public_tests and the ROS 2 "
+                 "dispatcher.\n";
     return 0;
 }
 

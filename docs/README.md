@@ -111,5 +111,5 @@ Summary: 1 package finished [9.27s]
 3. 终端只出现前几条结果就停住
    `warehouse_dispatcher` 在收到 `COMPLETE O1` 时会用派单阶段记录的真实站点去调用 `Scheduler::complete`。若核心库的 `submit` 返回的 `station_id` 为空，完成请求会被判为未知站点，后续事件不再产生预期输出。先跑 `./build/public_tests` 确认核心库本身正常。
 
-4. `./build/public_tests` 输出 `ERROR: TODO: implement ...`
-   说明源码里仍有未实现的桩函数。`grep -R "TODO: implement" src include` 可以定位。
+4. `./build/debug_task` 仍然输出 `S1 no -1 yes 0`
+   说明二进制没有重新生成，或者改的位置不对。先 `cmake --build build --clean-first` 再跑；如果依旧，检查 `src/debug/main.cpp` 的 `submit` 里库存判断是否位于 `item.second -= quantity` 之前，以及 `quantity <= 0` 的拦截是否加在循环外。

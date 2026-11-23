@@ -1,45 +1,43 @@
 # AIM 2627 C++ OOP Coursework 02
 
-仓库拣货机器人任务分配系统。全部任务规格见 [Problem.pdf](Problem.pdf)，本 README 只负责本地启动。
+仓库拣货机器人任务分配系统。调度核心是仅依赖 C++ 标准库的 `aim_oop_core`，同一份实现被本地演示、公开测试与 ROS 2 调度节点复用。完整规格见 [Problem.pdf](Problem.pdf)。
+
+## 快速开始
 
 ```bash
 cmake -S . -B build
 cmake --build build --parallel 4
 ctest --test-dir build --output-on-failure
+./build/public_tests
 ./build/debug_task
 ```
 
-## 修改范围
+预期输出、ROS 2 构建运行命令与故障排查见 [`docs/README.md`](docs/README.md)。
 
-- 可以修改：`include/`、`src/`、`README.md`、`docs/`。
-- 不要修改：`tests/`、`tools/`、`.github/`、`CMakeLists.txt`、`Problem.pdf`。
-- `src/debug/main.cpp` 是 Q4 的独立调试任务；不要通过绕开缺陷的输出方式得分。
+## 仓库结构
+
+| 路径 | 内容 |
+| --- | --- |
+| `include/` | `warehouse`、`dispatch`、`audit`、`app` 四个命名空间的公开头文件 |
+| `src/` | 核心库实现、命令行入口、Q4 独立调试程序 |
+| `ros2_ws/` | ROS 2 Jazzy 包 `warehouse_dispatch`，编译同一批核心源码 |
+| `docs/` | 运行说明与设计记录 |
+| `tests/`、`tools/` | 公开测试与结构校验脚本，保持模板原样 |
 
 ## ROS 2 演示
 
-ROS 2 部分在 `ros2_ws/` 中独立构建，复用 `include/` 和 `src/` 的核心实现。课程使用 ROS 2 Jazzy，演示不依赖硬件。命令见题面 Q2。
+ROS 2 部分在 `ros2_ws/` 中独立构建，两个节点只通过核心库的公开接口完成调度，不复制库存扣减或候选筛选逻辑。构建、运行与六条预期输出的对照见 `docs/README.md` 第 3、4 节。
 
-## 文档交付
+## 文档
 
-在 `docs/README.md` 和 `docs/DESIGN.md` 中完成 Q5。初始文件只是提示骨架，正式要求以题面为准。
+- [`docs/README.md`](docs/README.md)：环境要求、本地构建与验收命令、Q4 调试程序、ROS 2 运行步骤、故障排查。
+- [`docs/DESIGN.md`](docs/DESIGN.md)：四个命名空间的职责与依赖方向、两种调度策略的差异、状态转换表、Q4 调试证据与边界验证记录。
 
 ## Agent 会话归档
 
-允许并鼓励合理使用 AI 辅助开发，但必须保留可核对的过程记录。参照 Python CW 与 C++ Assessment 01，本作业使用 Agent Session Commit（AgentLedger）v0.1.5。
+本仓库使用 Agent Session Commit（AgentLedger）v0.1.5 记录 AI 辅助开发的过程，归档文件位于 `.agent-sessions/bundles/`。每次提交后由 post-commit hook 把新增会话打包并 amend 到同一提交。
 
-在个人学生仓库根目录配置，不要在教师完整目录或其他项目中安装：
-
-```bash
-python -m venv .venv-agent-session-commit
-source .venv-agent-session-commit/bin/activate
-python -m pip install --index-url https://pypi.org/simple 'agent-session-commit[pre-commit]==0.1.5'
-agent-session-commit install --pre-commit
-agent-session-commit status
-```
-
-每次正常 `git commit` 后，post-commit hook 会把新增 AI 会话打包到 `.agent-sessions/bundles/` 并 amend 到同一提交。`.agent-sessions/bundles/` 必须提交；`.agent-sessions/source/` 与 `.venv-agent-session-commit/` 已忽略。没有使用 AI 时，在 README 末尾明确声明并提供开发记录。
-
-提交前检查：
+提交前可以用以下命令核对归档是否随提交一起进入版本库：
 
 ```bash
 git rev-parse HEAD
