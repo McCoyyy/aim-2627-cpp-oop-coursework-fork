@@ -46,6 +46,31 @@ git rev-parse HEAD
 git show --stat HEAD -- .agent-sessions/
 ```
 
-## AI 使用与开发过程（你来写）
+## AI 使用与开发过程
 
-声明是否使用 AI；如使用，说明工具、帮助范围、哪些建议未采用、如何验证结果，并说明 `.agent-sessions/bundles/` 中的归档位置。未使用则明确声明并提供可核对的开发记录；记录不完整时如实说明原因。
+本次作业使用了 AI 编程助手，工具为 Tencent WorkBuddy（CLI 形态的编码代理）。
+
+帮助范围：
+
+- Q1 的 `warehouse/domain.cpp`、`dispatch/policy.cpp`、`dispatch/scheduler.cpp`、`audit/trace.cpp`、`app/cli.cpp` 五个实现文件的初稿。
+- Q4 `src/debug/main.cpp` 的修复草稿。
+- Q5 的 `docs/README.md` 与 `docs/DESIGN.md` 初稿。
+
+未采纳的建议：
+
+- 建议在 `Scheduler::submit` 中调用 `app::valid_order_id` 和 `app::valid_station_id` 做输入校验。这样会让 `dispatch` 反向依赖 `app`，与本作业的单向依赖要求冲突，改为在 `dispatch` 内部保留一份本地校验。
+- 建议把 `Inventory::available_for` 的返回类型改为 `std::optional<std::vector<PickStation>>`，用 `nullopt` 表示无候选。公开方法签名由题面固定，未改动。
+
+验证方式：以下命令均为实际运行结果，不是推断值。
+
+```text
+./build/public_tests                  -> PUBLIC 2/2
+./build/debug_task                    -> S1 no 5 yes 0
+python3 tools/validate_structure.py   -> Structure OK
+ros2 launch warehouse_dispatch ...    -> ACCEPT O1 S1 / ACCEPT O2 S2 / REJECT O3 /
+                                         COMPLETE O1 / REJECT O4 / WAITED 1
+```
+
+ROS 2 演示在 Ubuntu 24.04 + ROS 2 Jazzy 环境中构建运行，`colcon build` 耗时 7.05 秒，两个节点在输出第六行后自行退出。逐条边界验证记录见 `docs/DESIGN.md` 第 6 节。
+
+归档位置：`.agent-sessions/bundles/`。归档由 Agent Session Commit（AgentLedger）v0.1.5 在本仓库以原生 hook 方式安装后生成，导出源目录为 `.agent-sessions/source/`（该目录按仓库约定不入版本库）。归档内容为本次开发会话的导出记录，与本仓库无关的本机环境信息没有纳入。
