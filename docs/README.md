@@ -78,9 +78,9 @@ ros2 launch warehouse_dispatch warehouse_demo.launch.py
 
 ```text
 Starting >>> warehouse_dispatch
-Finished <<< warehouse_dispatch [7.05s]
+Finished <<< warehouse_dispatch [9.27s]
 
-Summary: 1 package finished [7.05s]
+Summary: 1 package finished [9.27s]
 ```
 
 启动后 `warehouse_simulator` 每 300 ms 发布一条事件，`warehouse_dispatcher` 处理完 `WAIT 1` 后两个节点分别退出，`ros2 launch` 自行返回命令行提示符，不留后台进程。

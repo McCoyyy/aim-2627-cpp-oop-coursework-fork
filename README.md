@@ -71,6 +71,6 @@ ros2 launch warehouse_dispatch ...    -> ACCEPT O1 S1 / ACCEPT O2 S2 / REJECT O3
                                          COMPLETE O1 / REJECT O4 / WAITED 1
 ```
 
-ROS 2 演示在 Ubuntu 24.04 + ROS 2 Jazzy 环境中构建运行，`colcon build` 耗时 7.05 秒，两个节点在输出第六行后自行退出。逐条边界验证记录见 `docs/DESIGN.md` 第 6 节。
+ROS 2 演示在 Ubuntu 24.04 + ROS 2 Jazzy 环境中构建运行，`colcon build` 在 2 核环境耗时 9.27 秒，两个节点在输出第六行后自行退出。逐条边界验证记录见 `docs/DESIGN.md` 第 6 节。
 
 归档位置：`.agent-sessions/bundles/`。归档由 Agent Session Commit（AgentLedger）v0.1.5 在本仓库以原生 hook 方式安装后生成，导出源目录为 `.agent-sessions/source/`（该目录按仓库约定不入版本库）。归档内容为本次开发会话的导出记录，与本仓库无关的本机环境信息没有纳入。
