@@ -1,20 +1,13 @@
 #include "audit/trace.hpp"
 
-#include <stdexcept>
-
 namespace audit {
 
 void Trace::append(const std::string& text) {
-    (void)text;
-    throw std::runtime_error("TODO: implement Trace::append");
+    events_.push_back(TraceEvent{text});
 }
 
-std::vector<TraceEvent> Trace::events() const {
-    throw std::runtime_error("TODO: implement Trace::events");
-}
+std::vector<TraceEvent> Trace::events() const { return events_; }
 
-void Trace::clear() {
-    throw std::runtime_error("TODO: implement Trace::clear");
-}
+void Trace::clear() { events_.clear(); }
 
 }  // namespace audit

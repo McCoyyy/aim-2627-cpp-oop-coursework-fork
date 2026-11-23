@@ -1,27 +1,54 @@
 #include "app/cli.hpp"
 
+#include <algorithm>
+#include <cctype>
 #include <iostream>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 namespace app {
 namespace {
 
+bool has_edge_whitespace(const std::string& value) {
+    if (value.empty()) {
+        return true;
+    }
+    const auto first = static_cast<unsigned char>(value.front());
+    const auto last = static_cast<unsigned char>(value.back());
+    return std::isspace(first) != 0 || std::isspace(last) != 0;
+}
+
+std::string trim(const std::string& value) {
+    std::size_t begin = 0;
+    std::size_t end = value.size();
+    while (begin < end &&
+           std::isspace(static_cast<unsigned char>(value[begin])) != 0) {
+        ++begin;
+    }
+    while (end > begin &&
+           std::isspace(static_cast<unsigned char>(value[end - 1])) != 0) {
+        --end;
+    }
+    return value.substr(begin, end - begin);
+}
+
 }  // namespace
 
 std::string normalize_sku(const std::string& sku) {
-    (void)sku;
-    throw std::runtime_error("TODO: implement normalize_sku");
+    std::string normalized = trim(sku);
+    std::transform(normalized.begin(), normalized.end(), normalized.begin(),
+                   [](unsigned char character) {
+                       return static_cast<char>(std::toupper(character));
+                   });
+    return normalized;
 }
 
 bool valid_station_id(const std::string& station_id) {
-    (void)station_id;
-    throw std::runtime_error("TODO: implement valid_station_id");
+    return !has_edge_whitespace(station_id);
 }
 
 bool valid_order_id(const std::string& order_id) {
-    (void)order_id;
-    throw std::runtime_error("TODO: implement valid_order_id");
+    return !has_edge_whitespace(order_id);
 }
 
 int run() {
