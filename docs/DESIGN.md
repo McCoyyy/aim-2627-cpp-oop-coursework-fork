@@ -96,14 +96,14 @@ return {true, station_id, "accepted"};
 
 ## 5. 修复前输出记录
 
-模板初始提交 `9ca9389` 中的 `src/debug/main.cpp` 就是缺陷版本，修复前在同一台机器上编译运行得到：
+模板初始提交 `d8cb946` 中的 `src/debug/main.cpp` 就是缺陷版本，修复前在同一台机器上编译运行得到：
 
 ```text
 $ ./build/debug_task
 S1 no -1 yes 0
 ```
 
-该版本可用 `git show 9ca9389:src/debug/main.cpp` 取回后单独编译复核。本次开发先把模板提交拉下来跑出上述错误输出，再做修改，因此错误现象和根因是对着实跑结果写的。
+该版本可用 `git show d8cb946:src/debug/main.cpp` 取回后单独编译复核。本次开发先把模板提交拉下来跑出上述错误输出，再做修改，因此错误现象和根因是对着实跑结果写的。
 
 ## 6. 边界验证记录
 
